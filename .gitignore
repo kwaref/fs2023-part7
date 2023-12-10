@@ -1,0 +1,24 @@
+# Logs
+routed-anecdotes/logs
+routed-anecdotes/*.log
+routed-anecdotes/npm-debug.log*
+routed-anecdotes/yarn-debug.log*
+routed-anecdotes/yarn-error.log*
+routed-anecdotes/pnpm-debug.log*
+routed-anecdotes/lerna-debug.log*
+
+routed-anecdotes/node_modules
+routed-anecdotes/dist
+routed-anecdotes/dist-ssr
+routed-anecdotes/*.local
+
+# Editor directories and files
+routed-anecdotes/.vscode/*
+routed-anecdotes/!.vscode/extensions.json
+routed-anecdotes/.idea
+routed-anecdotes/.DS_Store
+routed-anecdotes/*.suo
+routed-anecdotes/*.ntvs*
+routed-anecdotes/*.njsproj
+routed-anecdotes/*.sln
+routed-anecdotes/*.sw?
