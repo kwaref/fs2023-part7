@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
-import authService from './services/auth'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { Notification } from './components/Notification'
@@ -14,11 +13,12 @@ import {
   likeUp,
   removeBlog,
 } from './reducers/blogReducer'
+import { login, logout, singIn } from './reducers/userReducer'
 
 const App = () => {
   const dispatch = useDispatch()
 
-  const [user, setUser] = useState(null)
+  const user = useSelector((state) => state.user)
 
   const notification = useSelector((state) => state.notification)
   const blogs = useSelector((state) => state.blogs)
@@ -33,23 +33,13 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      dispatch(login(user))
       blogService.setToken(user.token)
     }
   }, [])
 
   const handleLogin = async (accessData) => {
-    try {
-      const user = await authService.login(accessData)
-      setUser(user)
-      blogService.setToken(user.token)
-      window.localStorage.setItem('loggedBloglistAppUser', JSON.stringify(user))
-    } catch (error) {
-      setNotification({ message: error.response.data.error, error: true })
-      setTimeout(() => {
-        setNotification({ message: null, error: false })
-      }, 3000)
-    }
+    dispatch(singIn(accessData))
   }
 
   const handleCreate = async (postData) => {
@@ -82,7 +72,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBloglistAppUser')
-    setUser(null)
+    dispatch(logout())
   }
 
   const blogForm = () => (
