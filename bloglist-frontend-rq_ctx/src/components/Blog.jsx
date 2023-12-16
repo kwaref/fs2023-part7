@@ -1,63 +1,70 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useUserValue } from '../Context'
+import CommentForm from './CommentForm'
+import { Button } from 'react-bootstrap'
 
-const Blog = ({ blog, user, like, remove }) => {
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
-  const removeButtonStyle ={
-    color: 'white',
-    backgroundColor: 'orange',
-    borderColor:'orange',
-    borderRadius: '10%'
-  }
-
-  const toggleButtonStyle ={
-    color: 'white',
-    backgroundColor: 'green',
-    borderColor:'green',
-    borderRadius: '10%'
-  }
-
-  const likeButtonStyle ={
-    color: 'black',
-    backgroundColor: 'cyan',
-    borderColor:'cyan',
-    borderRadius: '10%'
-  }
-
-  const [open, setOpen] = useState(false)
+const Blog = ({ blog, like, remove, comment }) => {
+  const loggedUser = useUserValue()
 
   const handleDelete = () => {
-    const confirm = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+    const confirm = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}?`
+    )
     confirm && remove(blog.id)
   }
 
-  return <div className="blog" style={blogStyle}>
-    <p className="blog-info" style={{ margin: '0px' }}>
-      {blog.title} {blog.author} <button className="toggle-button" style={toggleButtonStyle} onClick={() => setOpen(!open)}>{open ? 'hide':'view'}</button>
-    </p>
-    <div className="blog-details" style={{ display: open ? 'block' : 'none' }}>
-      <p className="blog-url" style={{ margin: '0px' }}>{blog.url}</p>
-      <p className="blog-likes" style={{ margin: '0px' }}>likes <span id='likes-holder'>{blog.likes || 0}</span> <button className='like-button' style={likeButtonStyle} onClick={() => like({ ...blog, likes: blog.likes + 1 })}>like</button></p>
-      <p className="blog-user" style={{ margin: '0px' }}>{blog.user ? blog.user.name : 'anonymous'}</p>
-      {blog.user.username === user.username ? <button className='remove-button' style={removeButtonStyle} onClick={handleDelete}>remove</button>: null}
+  const handleComment = (message) => {
+    const commentedBlog = { ...blog, comments: blog.comments.push(message) }
+    comment(commentedBlog)
+  }
+
+  return !loggedUser || !blog ? null : (
+    <div className="blog">
+      <h2>
+        {`${blog.title} ${blog.author}`}
+        <span>
+          <Button
+            type="button"
+            onClick={handleDelete}
+            variant="danger"
+            size="sm"
+          >
+            remove
+          </Button>
+        </span>
+      </h2>
+      <p>
+        <a href={blog.url} target="_blank">
+          {blog.url}
+        </a>
+      </p>
+      <p>
+        {blog.likes} likes{' '}
+        <span>
+          <Button variant="primary" size="sm" onClick={like}>
+            like
+          </Button>
+        </span>
+      </p>
+      <p>added by {blog.user.name}</p>
+      <div>
+        <h3>comments</h3>
+        <CommentForm handleComment={handleComment} />
+        <ul>
+          {blog.comments.map((c, index) => (
+            <li key={`${c}-${index}`}>{c}</li>
+          ))}
+        </ul>
+      </div>
     </div>
-  </div>
+  )
 }
 
-
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
+  // blog: PropTypes.object.isRequired,
+  // user: PropTypes.object.isRequired,
   like: PropTypes.func.isRequired,
-  remove: PropTypes.func.isRequired
+  remove: PropTypes.func.isRequired,
 }
 
 export default Blog

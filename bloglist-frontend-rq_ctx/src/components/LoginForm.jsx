@@ -1,42 +1,34 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { Form, Button } from 'react-bootstrap'
+import { useField } from '../hooks'
 
 const LoginForm = ({ handleLogin }) => {
+  const { reset: resetUsername, ...username } = useField('text')
+  const { reset: resetPassword, ...password } = useField('password')
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  const handleSubmit = evt => {
+  const handleSubmit = (evt) => {
     evt.preventDefault()
-    handleLogin({ username, password })
+    handleLogin({ username: username.value, password: password.value })
+    resetPassword()
+    resetUsername()
   }
 
   return (
     <div>
       <h2>Log in to application</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          username
-          <input
-            id='input-username'
-            type="text"
-            value={ username }
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            id='input-password'
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button id='button-login' type="submit">login</button>
-      </form>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group>
+          <Form.Label>username:</Form.Label>
+          <Form.Control id="input-username" {...username} name="Username" />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>password:</Form.Label>
+          <Form.Control id="input-password" {...password} name="Password" />
+        </Form.Group>
+        <Button variant="primary" id="button-login" type="submit">
+          login
+        </Button>
+      </Form>
     </div>
   )
 }

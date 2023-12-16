@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types'
+import { Alert } from 'react-bootstrap'
 
 export const Notification = ({ message, error = false }) => {
   return message ? (
-    <div id="notification-message" className={error ? 'error' : 'success'}>
+    <Alert id="notification-message" variant={error ? 'danger' : 'success'}>
       {message}
-    </div>
+    </Alert>
   ) : null
 }
 
